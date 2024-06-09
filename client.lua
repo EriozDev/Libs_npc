@@ -29,7 +29,6 @@ function npc:new(playerSrc, model, pos)
     local uid = npcUIDCounter
     npcCreated[uid] = npcPed
     npc:init(uid)
-    npc:CheckSync(self.source, uid)
     return uid
 end
 
@@ -227,22 +226,6 @@ function npc:ignore(uid, toggle)
         SetBlockingOfNonTemporaryEvents(npcPed, toggle)
     else
         print('No NPC found with UID: ', uid)
-    end
-end
-
-function npc:CheckSync(player, NpcUniqueId)
-    self.s = player
-    self.values = NpcUniqueId
-    if (self.s) then
-        if (self.values) then
-            self.v1 = GetPlayerServerId(PlayerId())
-            self.v2 = self.values
-            print('[^6SYNC^0] Sync for player ' .. self.v1 .. ' with npc ' .. self.v2)
-        else
-            print('[^1SYNC^0] Invalid Sync for player ' .. self.v1 .. ' with npc ' .. self.v2)
-        end
-    else
-        print('[^1SYNC^0] Invalid Sync for player ' .. self.v1)
     end
 end
 
