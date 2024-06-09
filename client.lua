@@ -1,11 +1,4 @@
--- Create By ERIOZ
-
-function PlayerLog(msg, hudColorIndex)
-    AddTextEntry('esxNotification', msg)
-    BeginTextCommandThefeedPost('esxNotification')
-    if hudColorIndex then ThefeedNextPostBackgroundColor(hudColorIndex) end
-    EndTextCommandThefeedPostTicker(false, true)
-end
+-- ERIOZ
 
 npc = {}
 npcCreated = {}
@@ -14,7 +7,7 @@ displayUIDs = false
 
 local __instance = {
     __index = npc,
-    __type = 'seed'
+    __type = 'npc'
 }
 
 setmetatable({}, __instance)
