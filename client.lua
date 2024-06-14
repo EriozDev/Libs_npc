@@ -1,5 +1,4 @@
 -- ERIOZ
--- cc
 npc = {}
 npcCreated = {}
 npcUIDCounter = 0
