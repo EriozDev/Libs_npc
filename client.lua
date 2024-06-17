@@ -9,11 +9,8 @@ local __instance = {
     __type = 'npc'
 }
 
-setmetatable({}, __instance)
-
 function npc:new(playerSrc, model, pos)
-    local self = {}
-    setmetatable(self, { __index = npc })
+    local self = setmetatable({}, __instance)
     self.source = playerSrc
     self.heading = GetEntityHeading(playerSrc)
     local modelHash = GetHashKey(model)
