@@ -24,7 +24,7 @@ function npc:new(playerSrc, model, pos)
     npcUIDCounter = npcUIDCounter + 1
     local uid = npcUIDCounter
     npcCreated[uid] = npcPed
-    npc:init(uid)
+    npc:__init(uid)
     return uid
 end
 
@@ -216,7 +216,7 @@ function npc:tpNpcAtMe(uid)
     end
 end
 
-function npc:ignore(uid, toggle)
+function npc:BlockingEvent(uid, toggle)
     local npcPed = npcCreated[uid]
     if npcPed then
         SetBlockingOfNonTemporaryEvents(npcPed, toggle)
@@ -225,9 +225,11 @@ function npc:ignore(uid, toggle)
     end
 end
 
-function npc:init(uid)
-    local x = GetPlayerServerId(PlayerId())
-    print('[^6DEBUG^0] Npc with uid ' .. uid .. ' was created by ' .. x)
+function npc:__init(uid)
+    if Config.Debug then
+        local x = GetPlayerServerId(PlayerId())
+        print('[^6DEBUG^0] Npc with uid ' .. uid .. ' was created by ' .. x)
+    end
 end
 
 function DrawText3D(x, y, z, text)

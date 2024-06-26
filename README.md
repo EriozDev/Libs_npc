@@ -25,7 +25,7 @@ npc:revive(uid) : revive an npc dead
 npc:SetCoords(uid, coords) : set a coords of an npc
 npc:tpToNpc(uid) : tp to npc
 npc:tpNpcAtMe(uid) : tp an npc at me
-npc:ignore(uid, toggle) : off an environment for an npc
+npc:BlockingEvent(uid, toggle) : off an environment for an npc
 
 
 principal command 'crun' for execute an code in a f8 console !
