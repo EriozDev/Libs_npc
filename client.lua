@@ -1,4 +1,4 @@
--- ERIOZ
+---@class npc
 npc = {}
 npcCreated = {}
 npcUIDCounter = 0
@@ -24,11 +24,12 @@ function npc:new(playerSrc, model, pos)
     npcUIDCounter = npcUIDCounter + 1
     local uid = npcUIDCounter
     npcCreated[uid] = npcPed
+    self.handle = npcPed
     npc:__init(uid)
-    return uid
+    return uid, self
 end
 
-function npc:GetNpcByUniqueId(uid)
+function GetNpcByUniqueId(uid)
     local npc = npcCreated[uid]
     if npc then
         return npc
@@ -36,16 +37,9 @@ function npc:GetNpcByUniqueId(uid)
     print("No NPC found with UID :", uid)
 end
 
-function npc:delete(uid)
-    local npcPed = npcCreated[uid]
-    if npcPed then
-        if DoesEntityExist(npcPed) then
-            DeleteEntity(npcPed)
-        else
-            print('No NPC found with UID:', uid)
-        end
-    else
-        print('No NPC found with UID:', uid)
+function npc:delete()
+    if DoesEntityExist(self.handle) then
+        DeleteEntity(self.handle)
     end
 end
 
@@ -59,169 +53,134 @@ function npc:deleteall()
     npcCreated = {}
 end
 
-function npc:addName(uid, name)
-    local npcPed = npcCreated[uid]
+function npc:addName(name)
+    local npcPed = self.handle
     if npcPed then
         GamerTag = CreateFakeMpGamerTag(npcPed,
             ("%s"):format(name), false, false, "test", false)
         SetMpGamerTagAlpha(GamerTag, 0, 150)
         SetMpGamerTagColour(GamerTag, 0, 4)
-    else
-        print('No NPC found with UID:', uid)
     end
 end
 
-function npc:removeName(uid)
-    local npcPed = npcCreated[uid]
+function npc:removeName()
+    local npcPed = self.handle
     if npcPed then
         RemoveMpGamerTag(GamerTag)
-    else
-        print('No NPC found with UID:', uid)
     end
 end
 
-function npc:freeze(uid, toggle)
-    local npcPed = npcCreated[uid]
+function npc:freeze(toggle)
+    local npcPed = self.handle
     if npcPed then
         FreezeEntityPosition(npcPed, toggle)
-    else
-        print('No NPC found with UID:', uid)
     end
 end
 
-function npc:godMod(uid, toggle)
-    local npcPed = npcCreated[uid]
+function npc:godMod(toggle)
+    local npcPed = self.handle
     if npcPed then
         SetEntityInvincible(npcPed, toggle)
-    else
-        print('No NPC found with UID:', uid)
     end
 end
 
-function npc:alpha(uid, level)
-    local npcPed = npcCreated[uid]
+function npc:alpha(level)
+    local npcPed = self.handle
     if npcPed then
         SetEntityAlpha(npcPed, level)
-    else
-        print('No NPC found with UID:', uid)
     end
 end
 
-function npc:addWeapon(uid, weapon, ammoCount)
-    local npcPed = npcCreated[uid]
+function npc:addWeapon(weapon, ammoCount)
+    local npcPed = self.handle
     if npcPed then
         local weaponHash = GetHashKey(weapon)
         GiveWeaponToPed(npcPed, weaponHash, ammoCount, false, true)
-    else
-        print('No NPC found with UID:', uid)
     end
 end
 
-function npc:removeWeapon(uid, weapon)
-    local npcPed = npcCreated[uid]
+function npc:removeWeapon(weapon)
+    local npcPed = self.handle
     if npcPed then
         local weaponHash = GetHashKey(weapon)
         RemoveWeaponFromPed(npcPed, weaponHash)
-    else
-        print('No NPC found with UID:', uid)
     end
 end
 
-function npc:taskCombatNPC(uid, uid2)
-    local npcPed = npcCreated[uid]
+function npc:taskCombatNPC(uid2)
+    local npcPed = self.handle
     local npcPed2 = npcCreated[uid2]
     if npcPed and npcPed2 then
         TaskCombatPed(npcPed, npcPed2, false, false)
-    else
-        print("An npc is invalid")
     end
 end
 
-function npc:followPlayer(uid, player)
+function npc:followPlayer(player)
     local playerPed = GetPlayerPed(player)
-    local npcPed = npcCreated[uid]
+    local npcPed = self.handle
     if npcPed then
         TaskFollowToOffsetOfEntity(npcPed, playerPed, 0.0, 0.0, 0.0, 1.0, -1, 5.0, true)
-    else
-        print('No NPC found with UID:', uid)
     end
 end
 
-function npc:PlayAnim(uid, animDict, animName)
-    local npcPed = npcCreated[uid]
+function npc:PlayAnim(animDict, animName)
+    local npcPed = self.handle
     if npcPed then
         RequestAnimDict(animDict)
         while not HasAnimDictLoaded(animDict) do
             Wait(1)
         end
         TaskPlayAnim(npcPed, animDict, animName, 8.0, -8.0, -1, 1, 0, false, false, false)
-    else
-        print('No NPC found with UID:', uid)
     end
 end
 
-function npc:StopAnim(uid)
-    local npcPed = npcCreated[uid]
+function npc:StopAnim()
+    local npcPed = self.handle
     if npcPed then
         ClearPedTasks(npcPed)
-    else
-        print('No NPC found with UID:', uid)
     end
 end
 
-function npc:revive(uid)
-    local npcPed = npcCreated[uid]
+function npc:revive()
+    local npcPed = self.handle
     if npcPed then
         if IsEntityDead(npcPed) then
             ResurrectPed(npcPed)
             ClearPedTasksImmediately(npcPed)
             SetEntityHealth(npcPed, GetEntityMaxHealth(npcPed))
-            print("NPC with UID " .. uid .. " has been revived.")
-        else
-            print("NPC with UID " .. uid .. " is not dead.")
         end
-    else
-        print('No NPC found with UID:', uid)
     end
 end
 
-function npc:SetCoords(uid, coords)
-    local npcPed = npcCreated[uid]
+function npc:SetCoords(coords)
+    local npcPed = self.handle
     local w = coords
     if npcPed then
         SetEntityCoords(npcPed, w.x, w.y, w.z, false, false, false, false)
-    else
-        print('No NPC found with UID:', uid)
     end
 end
 
-function npc:tpToNpc(uid)
-    local npcPed = npcCreated[uid]
+function npc:tpToNpc()
+    local npcPed = self.handle
     if npcPed then
         local i = PlayerPedId()
         local x = GetEntityCoords(npcPed)
         SetEntityCoords(i, x.x, x.y, x.z, false, false, false, false)
-    else
-        print('No NPC found with UID: ', uid)
     end
 end
 
-function npc:tpNpcAtMe(uid)
-    local npcPed = npcCreated[uid]
+function npc:tpNpcAtMe()
+    local npcPed = self.handle
     if npcPed then
         local pos = GetEntityCoords(PlayerPedId())
         SetEntityCoords(npcPed, pos.x, pos.y, pos.z, false, false, false, false)
-    else
-        print('No NPC found with UID: ', uid)
     end
 end
 
-function npc:BlockingEvent(uid, toggle)
-    local npcPed = npcCreated[uid]
+function npc:BlockingEvent(toggle)
+    local npcPed = self.handle
     if npcPed then
         SetBlockingOfNonTemporaryEvents(npcPed, toggle)
-    else
-        print('No NPC found with UID: ', uid)
     end
 end
 
@@ -270,10 +229,9 @@ end, false)
 
 RegisterCommand('npc_revive', function(source, args, rawCommand)
     local uid = tonumber(args[1])
-    if uid then
-        npc:revive(uid)
-    else
-        print("Please specify a valid UID.")
+    local npc = GetNpcByUniqueId(uid)
+    if npc then
+        npc:revive()
     end
 end)
 
